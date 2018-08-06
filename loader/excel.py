@@ -1,57 +1,58 @@
-import pandas as pd
 
 from pprint import pprint
-ID = 0
-ACC = 1   #quick comparions
-NAME = 2
 
 
 
-def evaluate_row_pattern(row,patterns):  #returns the patternsition of names,id numbers,accounts numbers,etc
+import pandas as pd
+from .utils import get_socios_asdict,ID,NAME,INDEX,ACC,IS_OK
+from . import comp
+from colorama import init,Fore
+init()
+
+from database.manage import insert_socios
+from .profile import profile
+
+
+
+
+
+
+
+
+
+def evaluate_row_pattern(row,patterns,list_socios):  #returns the patternsition of names,id numbers,accounts numbers,etc
+   
+        #extract values from the sheet
+    
+    name = comp.is_name(row[patterns[NAME]]) 
+    _id = comp.is_id(row[patterns[ID]])
+    acc = (comp.is_account(row[patterns[ACC][0]]),comp.is_account2(row[patterns[ACC][1]]))
+  
+        #start validationss
+    list_socios.append(get_socios_asdict(name,_id,acc)) 
+
+
+def read_file(path,patterns={NAME:1,ID:3,ACC:(5,6)}):
+    
+    df = pd.read_excel(path, header=None) #reading excel file
+    list_socios =[]
+    for row in  df.itertuples():
+        # try:
+        #     evaluate_row_pattern(row=row,patterns=patterns,list_socios=list_socios) # here i should warn that there are some problems with some cells
+        # except TypeError as e:
+        #     print(e)
+        #     break 
+        evaluate_row_pattern(row=row,patterns=patterns,list_socios=list_socios)
+    # insert_socios(list_socios)
+        
+
+
+
     
     
-    # for idx_cell,value in enumerate(row):
-    #     if not patterns.get(ID):
-    #         if utils.is_id(value):
-    #             patterns[ID] = idx_cell
-    #     if not patterns.get(ACC):
-    #         if utils.is_account(value):
-    #             patterns[ACC] = [idx_cell,idx_cell+1]
-    #     if not patterns.get(NAME):
-    #         if utils.is_name(value):
-    #             patterns[NAME] = idx_cell
-
-    # return True if len(patterns.keys())==3 else False
-    return True
 
 
-
-def start_database_test(df,patterns):
-    TEST = []
-    for index,row in  df.iterrows():
-        row_list = row.tolist()
-        # TEST.append({'NAME':row_list[patterns[NAME]],'ID':row_list[patterns[ID]]}) 
-        TEST.append({'NAME':row_list[0],'ID':row_list[2]})
-    pprint(TEST)
-
-
-
-def read_file(path):
-    patterns = {}   
-    df = pd.read_excel(path) #reading excel file
-    for index,row in  df.iterrows():
-        if (evaluate_row_pattern(row.tolist(),patterns)):
-            #then it find a pattern in the row and 
-            #it will start substractting the data form the file into the database
-            start_database_test(df,patterns)
-
-            break
-
-    
-        #here no pattern was found 
     
 
           
             
-if __name__=='__main__':
-    read_file(r'C:\Users\PC\Desktop\PASIVIC 2016\SOCIOS 2017 NUEVO.xls')
