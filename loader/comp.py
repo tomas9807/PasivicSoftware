@@ -33,7 +33,7 @@ def is_name(var):
     except IndexError:
         print(traceback.format_exc())
 
-        return (None,False)
+        return (var,False)
 
 
 
@@ -60,36 +60,44 @@ def is_id(var):
                 return ((split_one, split_two),is_ok)
 
 
-def is_account(var):  
+def is_account(var): 
+    is_ok = True 
     try:
-        pattern = re.compile(r'([0-9]{4}-?[0-9]{4})')
-        matches = pattern.findall(str(var))
+        if var=='': return (None,not is_ok)    
 
-        if len(matches)>1:   #it means the account is longer thats supposed 
+        tmp = str(var) 
+        pattern_wrong = re.compile(r'([^0-9-]+)')
+        matches_wrong = pattern_wrong .findall(tmp)
+        if len(matches_wrong)>0: return (var,False)
+        
+        pattern_ok = re.compile(r'([0-9])+-?([0-9])+')
+        matches_ok = pattern_ok.findall(tmp)
+        #REMEMBER ADDING OPTION TO SWITCH BETWEEN ONE AND TWO COLUMNS
+        print(matches_ok)
+        if len(matches_ok)>1 and len(matches_ok[0])==4 and len(matches_ok[1])==4:   #it means the account is longer thats supposed 
                                 #so most likely that complete account is enterily in one cell
-            return (''.join(matches[0] + matches[1]),False)
-        elif len(matches)==1: 
-            return (matches[0],True)
+            return (var,is_ok)
         else:  #error ocurred
-            return (matches[0],False)
+            return (var,not is_ok)
     except IndexError:
 
-        return (None,False)    
+        return (var,not is_ok)    
 
-def is_account2(var): 
+def is_account2(var):
+    is_ok = True  
     try:
         if var=='':
-            return (None,False)
+            return (None,not is_ok)
         pattern = re.compile(r'([0-9]+)')
         tmp = int(var) if isinstance(var,float) else var
         matches = pattern.findall(str(tmp))
         if len(matches)==1: 
-            return (matches[0],True)
+            return (matches[0],is_ok)
         else:  #error ocurred
-            return (matches[0],False)
-    except IndexError:
+            return (matches[0],not is_ok)
+    except:
 
-        return (None,False) 
+        return (var,not is_ok) 
 
 
 
