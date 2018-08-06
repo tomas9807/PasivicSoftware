@@ -6,8 +6,6 @@ from pprint import pprint
 import pandas as pd
 from .utils import get_socios_asdict,ID,NAME,INDEX,ACC,IS_OK
 from . import comp
-from colorama import init,Fore
-init()
 
 from database.manage import insert_socios
 from .profile import profile
@@ -34,7 +32,8 @@ def evaluate_row_pattern(row,patterns,list_socios):  #returns the patternsition 
 
 def read_file(path,patterns={NAME:1,ID:3,ACC:(5,6)}):
     
-    df = pd.read_excel(path, header=None) #reading excel file
+    df = pd.read_excel(path, header=None,na_filter=False) #reading excel file
+    
     list_socios =[]
     for row in  df.itertuples():
         # try:

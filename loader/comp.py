@@ -16,17 +16,19 @@ import traceback
 def is_name(var):
     try:            
         if len(str(var))<2: return (None,False)
+
         pattern_wrong = re.compile(r'([^A-Za-z\.,Ññ ]+)')
+    
         match_wrong = pattern_wrong.findall(str(var))
         #MATCH_WRONG AND MATCH_OK RETURNS ONLY ONE GROUP ('ALAMO A.LORENZO A.')
-        
-        if len(match_wrong)==1: 
-            print(match_wrong,len(match_wrong))
+
+        if len(match_wrong)>0: 
+            
             return (var,False)
         else:
             pattern_ok = re.compile(r'([A-Za-z\.,Ññ ]+)')
             match_ok = pattern_ok.findall(str(var))
-            print(match_ok,len(match_ok))
+            
             return (match_ok[0],True)
     except IndexError:
         print(traceback.format_exc())
@@ -44,7 +46,7 @@ def is_id(var):
     if tmp.isalnum(): 
         return (var,not is_ok)
     else:
-        split = re.split(r'[-.]?',tmp)
+        split = re.split(r'[-]?',tmp)
         
         if not len(split)==2: return (var,not is_ok)
         else:
@@ -65,7 +67,7 @@ def is_account(var):
 
         if len(matches)>1:   #it means the account is longer thats supposed 
                                 #so most likely that complete account is enterily in one cell
-            return (matches[0],False)
+            return (''.join(matches[0] + matches[1]),False)
         elif len(matches)==1: 
             return (matches[0],True)
         else:  #error ocurred
@@ -76,8 +78,11 @@ def is_account(var):
 
 def is_account2(var): 
     try:
+        if var=='':
+            return (None,False)
         pattern = re.compile(r'([0-9]+)')
-        matches = pattern.findall(str(var))
+        tmp = int(var) if isinstance(var,float) else var
+        matches = pattern.findall(str(tmp))
         if len(matches)==1: 
             return (matches[0],True)
         else:  #error ocurred
