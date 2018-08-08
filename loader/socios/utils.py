@@ -58,7 +58,7 @@ def is_id(var):
                 elif  not split_two.isdigit(): 
                     return {VAR:var,IS_OK: not is_ok}
                 else:
-                    return {VAR:var,IS_OK: is_ok}
+                    return {VAR:(split_one,split_two),IS_OK: is_ok}
 
     except: 
         return {VAR:var,IS_OK: not is_ok}

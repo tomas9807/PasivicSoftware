@@ -28,14 +28,15 @@ def evaluate_row_pattern(row,patterns):  #returns the patternsition of names,id 
         #start validationss
     return {utils.NAME:name,utils.ID:_id,utils.ACC:acc}
 
-def evaluate_rows(df,patterns={utils.NAME:1,utils.ID:3,utils.ACC:(5,6)}):
+def evaluate_rows(df,patterns={utils.NAME:2,utils.ID:4,utils.ACC:(6,7)}):
     for row in  df.itertuples():
-            try:
-              yield evaluate_row_pattern(row=row,patterns=patterns) # here i should warn that there are some problems with some cells
+
+        try:
+            yield evaluate_row_pattern(row=row,patterns=patterns) # here i should warn that there are some problems with some cells
             
-            except TypeError:
-                print(traceback.format_exc())
-                break 
+        except TypeError:
+            print(traceback.format_exc())
+            break 
 
 
 
