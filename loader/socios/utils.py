@@ -7,7 +7,7 @@ NAME = 2
 VAR = 3
 IS_OK = 4
 
-
+KEY = 0
 
 
 
