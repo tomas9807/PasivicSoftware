@@ -1,14 +1,7 @@
 import re 
 import traceback
  # quick comparisons
-ID = 0
-ACC = 1   #quick comparions
-NAME = 2
-VAR = 3
-IS_OK = 4
-
-KEY = 0
-
+from ..meta import VAR,IS_OK
 
 
    

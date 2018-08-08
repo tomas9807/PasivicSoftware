@@ -1,15 +1,10 @@
 
-from ..keys import NAME,ID,AC
+from ..meta import NAME,ID,ACC
 
-from pprint import pprint
-import traceback
-
-
-import pandas as pd
 
 from . import utils
+import pandas as pd
 
-from database.manage import insert_socios
 
 
 

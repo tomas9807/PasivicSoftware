@@ -2,14 +2,9 @@ from .meta import SOCIOS,EMPLEADOS,OBREROS,get_default_patterns
 
 import pandas as pd
 
-
-from pprint import pprint
-import traceback
-
-
 import pandas as pd
 
-from . import utils
+
 
 from database.manage import insert_socios
 
@@ -24,12 +19,14 @@ from database.manage import insert_socios
 
 
 
-def evaluate_rows(df,patterns=get_default_patterns.get[SOCIOS],key):
+def get_data_excel(df,patterns,key):
 
     if key==SOCIOS: 
-        from socios.excel import evaluate_row_pattern
+        from .socios.excel import evaluate_row_pattern
+        func = evaluate_row_pattern
     else: 
-        from socios.excel import evaluate_row_pattern
+        from .empleados.excel import get_ids
+        func = get_ids
 
         
     for row in  df.itertuples():
@@ -37,7 +34,7 @@ def evaluate_rows(df,patterns=get_default_patterns.get[SOCIOS],key):
         try:
             
 
-            yield evaluate_row_pattern(row=row,patterns=patterns) # here i should warn that there are some problems with some cells
+            yield func(row=row,patterns=patterns) # here i should warn that there are some problems with some cells
             
         except TypeError:
             print(traceback.format_exc())
@@ -45,8 +42,8 @@ def evaluate_rows(df,patterns=get_default_patterns.get[SOCIOS],key):
 
 
 
-def read_file(path,key):
+def read_file(path,patterns,key):
     
     df = pd.read_excel(path, header=None,na_filter=False) #reading excel file
-    insert_socios(evaluate_rows(df,key))
-        
+    insert_socios(get_data_excel(df=df,patterns=patterns,key=key),key)
+   

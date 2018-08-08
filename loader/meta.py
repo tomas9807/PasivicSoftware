@@ -4,16 +4,15 @@ OBREROS = 3
 NAME = 4
 ACC = 5
 ID = 6
+IS_OK = 7
+VAR = 8
 
-
-
-
-
-def get_default_patterns():
-    PATTERNS_DEFAULT = {
+PATTERNS_DEFAULT = {
     
     SOCIOS:{NAME:2,ID:4,ACC:(6,7)},
-    EMPLEADOS:{NAME:2,ID:4,ACC:(6,7)},
+    EMPLEADOS:{ID:3},
     OBREROS:{NAME:2,ID:4,ACC:(6,7)},
 }
-    yield from PATTERNS_DEFAULT
+
+def get_default_patterns(key):
+    return PATTERNS_DEFAULT.get(key)
