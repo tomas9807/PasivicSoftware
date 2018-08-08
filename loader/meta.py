@@ -11,7 +11,7 @@ PATTERNS_DEFAULT = {
     
     SOCIOS:{NAME:2,ID:4,ACC:(6,7)},
     EMPLEADOS:{ID:3},
-    OBREROS:{NAME:2,ID:4,ACC:(6,7)},
+    OBREROS:{ID:1},
 }
 
 def get_default_patterns(key):

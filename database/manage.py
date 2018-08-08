@@ -23,8 +23,7 @@ def get_actual_data(*,key,dict):
         _id = _id[VAR]
         return {NAME:name,ID:_id,ACC:new_acc}  if not are_all_null(name , _id  ,new_acc[0] ,new_acc[1]) else None
     else:
-
-        return _id[VAR]
+        return _id
         
 
 
@@ -46,7 +45,8 @@ def insert_socios(socios,key):
         NAME TEXT,CEDULA_CHAR TEXT,CEDULA TEXT ,ACCOUNT_ONE TEXT ,ACCOUNT_TWO TEXT,
         EMPLEADO INT DEFAULT 0 ,OBRERO INT DEFAULT 0
         )""")
-
+        if not key==SOCIOS:
+            to_whom = 'EMPLEADO' if key==EMPLEADOS else 'OBRERO'
         for socio in socios:
             
             try:
@@ -56,12 +56,16 @@ def insert_socios(socios,key):
                         cur.execute(""" INSERT INTO socios(NAME,CEDULA_CHAR,CEDULA,ACCOUNT_ONE,ACCOUNT_TWO)
                         VALUES(?,?,?,?,?)
                         """,(data[NAME] , data[ID][0],data[ID][1],data[ACC][0],data[ACC][1]))
+                    
                     else:
                        
+                       
 
-                        cur.execute(""" 
-                        UPDATE socios SET EMPLEADO =? WHERE CEDULA=? 
+                        cur.execute(f""" 
+                        UPDATE socios SET {to_whom} =? WHERE CEDULA=? 
                         """,(1,data))
+                    
+
 
 
 

@@ -51,11 +51,11 @@ def is_id(var):
                 elif  not split_two.isdigit(): 
                     return {VAR:var,IS_OK: not is_ok}
                 else:
-                    return {VAR:(split_one,split_two),IS_OK: is_ok}
+                    match = re.findall(r'[1-9]+[0-9]*',split_two)
+                    return {VAR:(split_one,match[0]),IS_OK: is_ok}
 
     except: 
         return {VAR:var,IS_OK: not is_ok}
-
 
 
 def is_account(var): 
