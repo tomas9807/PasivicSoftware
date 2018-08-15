@@ -6,13 +6,31 @@ ACC = 5
 ID = 6
 IS_OK = 7
 VAR = 8
+MOVIMIENTOS = 9
+APORTE_DEDUC = 10
 
+APORTE = 15
+DEDUC = 16
+
+
+FILENAMES_HANDFULS = {OBREROS:'semana'}
 PATTERNS_DEFAULT = {
     
     SOCIOS:{NAME:2,ID:4,ACC:(6,7)},
     EMPLEADOS:{ID:3},
     OBREROS:{ID:1},
+    MOVIMIENTOS:{ID:1,APORTE_DEDUC:3},
+
 }
+
+QUINCENAS_COUNT_PRECISE = 23
+SEMANAS_COUNT_PRECISE = 51
+
+
+
+def get_filename_handfuls(key):
+    return FILENAMES_HANDFULS.get(key)
+
 
 def get_default_patterns(key):
     return PATTERNS_DEFAULT.get(key)

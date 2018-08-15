@@ -1,7 +1,25 @@
 import sqlite3
-from loader.meta import ID,ACC,NAME,IS_OK,VAR,SOCIOS,EMPLEADOS,OBREROS
+from loader.meta import ID,ACC,NAME,IS_OK,VAR,SOCIOS,EMPLEADOS,OBREROS,SEMANAS_COUNT_PRECISE,QUINCENAS_COUNT_P,APORTE,DEDUC
 import os
 import traceback
+
+
+def insert_mov(cur,key,indentifier,date,socio_id,mov):
+    
+    if key==OBREROS:
+        if indentifier==APORTE:
+            cur.execute(f""" 
+            UPDARE movimientos_obreros_aportes SET semana_{date}=? WHERE socio_id=?
+            """,mov,socio_id)
+
+
+
+
+
+def get_semanas_fields():
+    return ','.join(f'semana_{semana_num} TEXT' for semana_num in range(SEMANAS_COUNT_PRECISE))
+
+
 
 def are_all_null(*args):
     return all(arg==None for arg in args)
@@ -41,10 +59,36 @@ def connect():
         print(e)
 
 def check_data_base(cur):
-    cur.execute("""CREATE TABLE IF NOT EXISTS socios(ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    NAME TEXT,CEDULA_CHAR TEXT,CEDULA TEXT ,ACCOUNT_ONE TEXT ,ACCOUNT_TWO TEXT,
-    EMPLEADO INT DEFAULT 0 ,OBRERO INT DEFAULT 0
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS socios(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    cedula_char TEXT,
+    cedula text ,ACCOUNT_ONE TEXT ,
+    account_two TEXT,
+    empleado INT DEFAULT 0 ,
+    obrero INT DEFAULT 0
     )""")
+
+    
+
+    cur.execute(f"""
+    CREATE TABLE IF NOT EXISTS movimientos_obreros_aportes(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    socio_id INTEGER,
+    {get_semanas_fields()},
+    FOREIGN KEY(socio_id) REFERENCES socios(id)
+    )""")
+
+
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS movimientos_empleados_aportes(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    socio_id INTEGER,
+    FOREIGN KEY(socio_id) REFERENCES socios(id)
+    )""")
+
 
 
 def insert_socios(socio,key,cur):
@@ -56,7 +100,7 @@ def insert_socios(socio,key,cur):
     # )""")
     
     if not key==SOCIOS:
-        to_whom = 'EMPLEADO' if key==EMPLEADOS else 'OBRERO'
+        to_whom = 'empleado' if key==EMPLEADOS else 'obrero'
     try:
         data = get_actual_data(dict=socio,key=key)
         if data is not None:
