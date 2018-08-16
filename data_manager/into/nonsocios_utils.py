@@ -1,6 +1,20 @@
-from ..meta import IS_OK,VAR,SOCIOS,EMPLEADOS,OBREROS,get_filename_handfuls
-
 import re
+
+
+
+def get_ids(row,patterns): 
+    return is_id(row[patterns[ID]])
+
+def get_date(file_name,key):
+    return get_date_from_filename(file_name,key)
+   
+def get_id(var):
+    return is_id(var)
+
+def get_mov(var):
+    return is_mov(var)
+    
+
 
 
 
@@ -46,9 +60,3 @@ def is_mov(var):
 
 
         
-
-
-
-
-    
-

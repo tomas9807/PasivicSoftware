@@ -1,6 +1,4 @@
 import sqlite3
-from loader.meta import ID,ACC,NAME,IS_OK,VAR,SOCIOS,EMPLEADOS,OBREROS,APORTE,DEDUC
-from loader.meta import SEMANAS_COUNT_PRECISE as semanas,QUINCENAS_COUNT_PRECISE as quincenas
 import os
 import traceback
 

@@ -1,10 +1,16 @@
-import re 
-import traceback
- # quick comparisons
-from ..meta import VAR,IS_OK
+import re
 
 
-   
+
+
+def format_data_socios(row,patterns):
+    name = socios_utils.is_name(row[patterns[NAME]]) 
+    _id = socios_utils.is_id(row[patterns[ID]])
+    acc = (socios_utils.is_account(row[patterns[ACC][0]]),socios_utils.is_account2(row[patterns[ACC][1]]))
+    return {NAME:name,ID:_id,ACC:acc}
+
+
+
 def is_name(var):
     is_ok = True
     try:            
@@ -98,17 +104,3 @@ def is_account2(var):
     except:
 
         return {VAR:var,IS_OK: not is_ok}
-
-
-
-
-
-
-        
-
-
-
-
-
-
-

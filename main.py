@@ -1,20 +1,20 @@
-from loader import main_excel as excel
-from loader.meta import get_default_patterns,SOCIOS,EMPLEADOS,OBREROS,APORTE,DEDUC
 import os
-from database.manage import check_data_base,connect
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+import metadata 
+from data_manager.out import to_database
+from data_manager.into import excel
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+KEYS = metadata.setup.Keys()
 
 if __name__=='__main__':
-    if os.path.isfile('db.sqlite3'): os.remove('db.sqlite3')
-    conn = connect()
+
+    conn = to_database.connect()
     with conn:
         cur = conn.cursor()   
-        check_data_base(cur)
+        to_database.check_data_base(cur)
         
-    
-       
-        excel.fill_database(
+
+        excel.setup_database(
         path= os.path.join(BASE_DIR,'archivos/PASIVIC 2016/SOCIOS 2017 NUEVO.xls'),
         patterns=get_default_patterns(SOCIOS),
         key = SOCIOS,

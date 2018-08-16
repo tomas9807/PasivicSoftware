@@ -1,16 +1,15 @@
 {
-"SOCIOS" : 1,
-"EMPLEADOS" : 2,
-"OBREROS" : 3,
+"SOC" : 1,
+"EMP" : 2,
+"OBR" : 3,
 "NAME" : 4,
 "ACC" : 5,
 "ID" : 6,
 "IS_OK" : 7,
 "VAR" : 8,
-"MOVIMIENTOS" : 9,
-"APORTE_DEDUC" : 10,
-"APORTE" : 15,
-"DEDUC" : 16,
-"QUINCENAS_COUNT" : 23,
-"SEMANAS_COUNT" : 51
+"MOV" : 9,
+"APOR" : 15,
+"DEDU" : 16,
+"QUIN" : 23,
+"SEM" : 51
 }
