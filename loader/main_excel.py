@@ -1,4 +1,4 @@
-from .meta import SOCIOS,EMPLEADOS,OBREROS,get_default_patterns,APORTE_DEDUC,APORTE,DEDUC,MOVIMIENTOS
+from .meta import SOCIOS,EMPLEADOS,OBREROS,get_default_patterns,APORTE_DEDUC,APORTE,DEDUC,MOVIMIENTOS,IS_OK,VAR,ID
 
 import pandas as pd
 
@@ -7,15 +7,18 @@ import pandas as pd
 import traceback
 
 from database.manage import insert_socios,connect,check_data_base,insert_socios,insert_mov
-from empleados.excel import get_date,get_ids
+from .empleados.excel import get_date,get_ids,get_id,get_mov
 from .socios.excel import evaluate_row_pattern
 
 
+import os
 
 
 
-
-
+def read_excel(path):
+    return pd.read_excel(path, header=None,na_filter=False) 
+    
+    
 
 def get_data_excel(df,patterns,key,func):
      for row in  df.itertuples():
@@ -29,29 +32,39 @@ def get_data_excel(df,patterns,key,func):
             break 
 
    
-def check_date(cur,path,key,indentifier,list_of_files): #identitifier means aporte or deduccion
+def fill_movs(cur,key,indentifier,list_of_files): #identitifier means aporte or deduccion
+
     for file in list_of_files:
-        date = get_date(file_name=file,key=key)
-            if date is None:
-                return None
-            elif isinstance(date,'dict'):
-                return None
-            else:
-                df = pd.read_excel(file, header=None,na_filter=False) 
-                #returns like this ('5')
-                for row in df.itertuples():
-                    _id = row[MOVIMIENTOS[ID]]
-                    
-                    mov = row[MOVIMIENTOS[APORTE_DEDUC]]
 
-                    data = cur.execute(""" 
+        date = get_date(file_name=os.path.basename(file),key=key)
+    
+        if date is None:
+            return None
+        elif isinstance(date,dict):
+            return None
+        else:
+            print(date)
+            df = read_excel(file)
 
-                    SELECT id FROM socios WHERE cedula=? LIMIT 1
-                    """,_id)
-                    socio_id = data.fetchone()
-                    if socio_id:
-                        insert_mov(cur,key,indentifier,date,socio_id,mov)
+            for row in df.itertuples():
+                _id = get_id(row[get_default_patterns(MOVIMIENTOS)[ID]])
+                if _id[IS_OK]:
+              
                     
+
+
+                    mov = get_mov(row[get_default_patterns(MOVIMIENTOS)[APORTE_DEDUC]])
+         
+                    if mov is not None:
+
+                        data = cur.execute(""" 
+                        SELECT id FROM socios WHERE cedula=? LIMIT 1
+                        """,(_id[VAR],))
+                        socio_id = data.fetchone()
+                        
+                        if socio_id:
+                            insert_mov(cur,key,indentifier,date[0],socio_id,''.join(mov))
+                        
 
 
 
@@ -67,10 +80,10 @@ def check_date(cur,path,key,indentifier,list_of_files): #identitifier means apor
 
 
 
-def fill_database(path,patterns,key):
+def fill_database(cur,path,patterns,key):
     
     
-    df = pd.read_excel(path, header=None,na_filter=False) 
+    df = read_excel(path) 
 
     if key==SOCIOS: 
 
@@ -78,11 +91,8 @@ def fill_database(path,patterns,key):
     else: 
         
         func = get_ids
-    conn = connect()
-    with conn:
-        cur = conn.cursor()   
-        check_data_base(cur) 
-        for data in get_data_excel(df=df,patterns=patterns,key=key,func=func):
-            insert_socios(socio=data,key=key,cur=cur)
+    
+    for data in get_data_excel(df=df,patterns=patterns,key=key,func=func):
+        insert_socios(socio=data,key=key,cur=cur)
 
    

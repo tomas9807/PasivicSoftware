@@ -1,5 +1,6 @@
 import sqlite3
-from loader.meta import ID,ACC,NAME,IS_OK,VAR,SOCIOS,EMPLEADOS,OBREROS,SEMANAS_COUNT_PRECISE,QUINCENAS_COUNT_P,APORTE,DEDUC
+from loader.meta import ID,ACC,NAME,IS_OK,VAR,SOCIOS,EMPLEADOS,OBREROS,APORTE,DEDUC
+from loader.meta import SEMANAS_COUNT_PRECISE as semanas,QUINCENAS_COUNT_PRECISE as quincenas
 import os
 import traceback
 
@@ -8,16 +9,17 @@ def insert_mov(cur,key,indentifier,date,socio_id,mov):
     
     if key==OBREROS:
         if indentifier==APORTE:
+
             cur.execute(f""" 
-            UPDARE movimientos_obreros_aportes SET semana_{date}=? WHERE socio_id=?
-            """,mov,socio_id)
+            INSERT INTO movimientos_obreros_aportes semana_{date}=? WHERE socio_id=?
+            """,(mov,socio_id[0]))
 
 
 
 
 
 def get_semanas_fields():
-    return ','.join(f'semana_{semana_num} TEXT' for semana_num in range(SEMANAS_COUNT_PRECISE))
+    return ','.join(f'semana_{semana_num+1} TEXT' for semana_num in range(semanas))
 
 
 

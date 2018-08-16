@@ -20,10 +20,13 @@ def is_id(var):
         return {VAR:var,IS_OK: not is_ok}
 
 def get_date_from_filename(file_name,key):
+
     if key==EMPLEADOS and re.search(get_filename_handfuls(OBREROS),file_name,re.IGNORECASE):
         return get_filename_handfuls(OBREROS)
 
-    matches = re.search(r'0*([0-9]{1,2})-0*([0-9]{1,2})-[0-9]+',file_name).groups() if key==EMPLEADOS else re.search(r'0*([0-9]{1,2})20?[0-9]{2}',file_name).groups()
+
+    matches = re.search(r'0*([0-9]{1,2})-0*([0-9]{1,2})-[0-9]+',file_name).groups() if key==EMPLEADOS else re.search(r'0*([0-9]{1,2})20?[0-9]{2}',file_name)
+    matches = matches.groups()
     if matches and len(matches)==2 or len(matches)==1:
         return matches
     
@@ -31,11 +34,16 @@ def get_date_from_filename(file_name,key):
 
 def is_mov(var):
     var = str(var)
-    match = re.search(r'^([0-9]*)[.,]*([0-9]{0,2})',var)
-    if len(match)==3:
 
+    match = re.search(r'^([0-9]*)([.,]*)([0-9]{0,2})',var).groups()
+
+    if len(match)==3:
+        return match
     elif var.isdigit():
-        var[]
+        return (var[1:len(var)-2],'.',var[:-2])
+    else:
+        return None
+
 
         
 

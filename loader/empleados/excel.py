@@ -14,6 +14,13 @@ def get_ids(row,patterns):
 def get_date(file_name,key):
     return utils.get_date_from_filename(file_name,key)
    
+def get_id(var):
+    return utils.is_id(var)
+
+def get_mov(var):
+    return utils.is_mov(var)
+    
+        
 
 
 
