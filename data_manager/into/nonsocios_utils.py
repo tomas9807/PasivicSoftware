@@ -2,14 +2,14 @@ import re
 
 
 
-def get_ids(row,patterns): 
-    return is_id(row[patterns[ID]])
+def get_ids(meta,row,patterns): 
+    return is_id(row[patterns[meta.ID]],meta)
 
-def get_date(file_name,key):
-    return get_date_from_filename(file_name,key)
+def get_date(meta,file_name,key):
+    return get_date_from_filename(file_name,key,meta)
    
-def get_id(var):
-    return is_id(var)
+def get_id(meta,var):
+    return is_id(var,meta)
 
 def get_mov(var):
     return is_mov(var)
@@ -20,26 +20,24 @@ def get_mov(var):
 
 
 
-def is_id(var):
+def is_id(var,meta):
     is_ok = True
 
     try:
         _id = str(var).strip()
 
-        if _id=='': return {VAR:None,IS_OK: not is_ok}
+        if _id=='': return {meta.VAR:None,meta.IS_OK: not is_ok}
         pattern = re.compile(r'[0-9]+')
         match = pattern.findall(_id)
-        if len(match)>0: return {VAR:match[0],IS_OK:is_ok}
+        if len(match)>0: return {meta.VAR:match[0],meta.IS_OK:is_ok}
     except:
-        return {VAR:var,IS_OK: not is_ok}
+        return {meta.VAR:var,meta.IS_OK: not is_ok}
 
-def get_date_from_filename(file_name,key):
-
-    if key==EMPLEADOS and re.search(get_filename_handfuls(OBREROS),file_name,re.IGNORECASE):
-        return get_filename_handfuls(OBREROS)
+def get_date_from_filename(file_name,key,meta):
 
 
-    matches = re.search(r'0*([0-9]{1,2})-0*([0-9]{1,2})-[0-9]+',file_name).groups() if key==EMPLEADOS else re.search(r'0*([0-9]{1,2})20?[0-9]{2}',file_name)
+
+    matches = re.search(r'0*([0-9]{1,2})-0*([0-9]{1,2})-[0-9]+',file_name).groups() if key==meta.EMPLEADOS else re.search(r'0*([0-9]{1,2})20?[0-9]{2}',file_name)
     matches = matches.groups()
     if matches and len(matches)==2 or len(matches)==1:
         return matches

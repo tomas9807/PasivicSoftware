@@ -46,6 +46,7 @@ class Keys():
         return dict
         
     def get_default_patterns(self,key): 
+        
         return self.__default_patterns.get(key)
 
 
