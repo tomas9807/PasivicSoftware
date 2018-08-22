@@ -6,10 +6,16 @@ from data_manager.into import from_excel
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
+
+def remove_database():
+    import subprocess
+    subprocess.run('sudo rm -f ../../database/db.sqlite3',check=True)
+
+
+
+
 if __name__=='__main__':
-
-
-
+    remove_database()
     conn = to_database.connect() #connect to the database 
     with conn:
         META_KEYS = metadata_setup.Keys() #setup a object that has keys for easy dict manipulation and for differentiation of files or content

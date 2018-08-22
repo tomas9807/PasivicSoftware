@@ -59,6 +59,7 @@ def insert_movs(meta,cur, key, indentifier, list_of_files):
                                        date[0], socio_id, ''.join(mov))
 
 
+
 def setup_database(meta,cur, key,patterns,file):
 
     df = read_excel(file)

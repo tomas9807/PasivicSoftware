@@ -3,34 +3,46 @@ import os
 import traceback
 
 
-def insert_mov(meta,cur,key,indentifier,date,socio_id,mov):
+def get_strs(meta,key,identifier):
+    identifier_str = 'aportes' if identifier==meta.APORTE else 'deducciones'
+    key_str = 'obreros' if key==meta.OBREROS else 'empleados'
+    date = 'semanas' if key==meta.OBREROS else 'quincenas'
+    return {key:key_str,identifier:identifier_str,'date':date}
+
+
+def insert_mov(meta,cur,key,identifier,date,socio_id,mov):
+    strs = get_strs(meta,key,identifier)
+    mov_strs = 'movimientos'
+    data = cur.execute(f"""
+        SELECT socio_id FROM {mov_strs}_{strs[key]}_{strs[identifier]} WHERE socio_id={socio_id[0]}
+    """)
+
+    if not data.fetchone():
+
+        cur.execute(f""" 
+        INSERT INTO {mov_strs}_{strs[key]}_{strs[identifier]}   (socio_id,{strs['date']}_{date})
+        VALUES(?,?)
+        """,(socio_id[0],mov,))
+    else:
+
+        cur.execute(f""" 
+        UPDATE {mov_strs}_{strs[key]}_{strs[identifier]}  SET {strs['date']}_{date}=? WHERE socio_id=?
+
+        """,(mov,socio_id[0]))
+
+
+
+
+
+
+def get_date_fields(meta,key_str,identifier_str):
+    num_fields = meta.SEMANAS if key_str=='obreros' else meta.QUINCENAS
+    return ','.join(f'{identifier_str}_{num+1}' for num in range(num_fields))
+
+
+
+
     
-    if key==meta.OBREROS:
-        if indentifier==meta.APORTE:
-            data = cur.execute(f"""
-              SELECT socio_id FROM movimientos_obreros_aportes where socio_id={socio_id[0]}
-            """)
-
-            if not data.fetchone():
-
-                cur.execute(f""" 
-                INSERT INTO movimientos_obreros_aportes  (socio_id,semana_{date})
-                VALUES(?,?)
-                """,(socio_id[0],mov,))
-            else:
-
-                cur.execute(f""" 
-                UPDATE movimientos_obreros_aportes SET semana_{date}=? WHERE socio_id=?
-
-                """,(mov,socio_id[0]))
-
-
-
-
-
-
-def get_semanas_fields(meta):
-    return ','.join(f'semana_{semana_num+1} TEXT' for semana_num in range(meta.SEMANAS))
 
 
 
@@ -72,6 +84,7 @@ def connect():
         print(e)
 
 def check_data_base(meta,cur):
+
     cur.execute("""
     CREATE TABLE IF NOT EXISTS socios(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -82,26 +95,17 @@ def check_data_base(meta,cur):
     empleado INT DEFAULT 0 ,
     obrero INT DEFAULT 0
     )""")
-
     
-
-    cur.execute(f"""
-    CREATE TABLE IF NOT EXISTS movimientos_obreros_aportes(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    socio_id INTEGER UNIQUE,
-    {get_semanas_fields(meta)},
-    FOREIGN KEY(socio_id) REFERENCES socios(id)
-    )""")
-
-
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS movimientos_empleados_aportes(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    socio_id INTEGER,
-    FOREIGN KEY(socio_id) REFERENCES socios(id)
-    )""")
-
+    for i in range(4):
+        identifier_str = 'aportes' if i%2==0 else 'deducciones'
+        key_str = 'obreros' if i<=1 else 'empleados'
+        cur.execute(f"""
+        CREATE TABLE IF NOT EXISTS movimientos_{key_str}_{identifier_str}(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        socio_id INTEGER UNIQUE,
+        {get_date_fields(meta,key_str,identifier_str)},
+        FOREIGN KEY(socio_id) REFERENCES socios(id)
+        )""")
 
 
 def setup_socios(meta,socio,key,cur):
@@ -123,21 +127,8 @@ def setup_socios(meta,socio,key,cur):
                 """,(data[meta.NAME] , data[meta.ID][0],data[meta.ID][1],data[meta.ACC][0],data[meta.ACC][1]))
             
             else:
-                # if key==EMPLEADOS:
-
-                #     cur.execute(f""" 
-                #     SELECT CEDULA,NAME FROM socios LIMIT 2
-                #     """,)
-                #     cedulas = cur.fetchall()
-                #     d = str(data)
-                #     if d in cedulas:
-                #         print(True)
-                #     else:
-                #         print(d,' - ',list(cedulas))
-                        
                 
-
-                
+            
                 cur.execute(f""" 
                 UPDATE socios SET {to_whom} =? WHERE CEDULA=? 
                 """,(1,data))
