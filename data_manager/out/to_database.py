@@ -13,9 +13,11 @@ def get_strs(meta,key,identifier):
 def insert_mov(meta,cur,key,identifier,date,socio_id,mov):
     strs = get_strs(meta,key,identifier)
     mov_strs = 'movimientos'
+    
     data = cur.execute(f"""
-        SELECT socio_id FROM {mov_strs}_{strs[key]}_{strs[identifier]} WHERE socio_id={socio_id[0]}
-    """)
+    SELECT socio_id FROM {mov_strs}_{strs[key]}_{strs[identifier]} WHERE socio_id=?
+    """,(socio_id[0],))
+
 
     if not data.fetchone():
 
