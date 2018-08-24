@@ -37,9 +37,10 @@ def insert_mov(meta,cur,key,identifier,date,socio_id,mov):
 
 
 
-def get_date_fields(meta,key_str,identifier_str):
+def get_date_fields(meta,key_str):
     num_fields = meta.SEMANAS if key_str=='obreros' else meta.QUINCENAS
-    return ','.join(f'{identifier_str}_{num+1}' for num in range(num_fields))
+    date_type = 'semanas' if key_str=='obreros' else 'quincenas'
+    return ','.join(f'{date_type}_{num+1}' for num in range(num_fields))
 
 
 
@@ -56,6 +57,7 @@ def get_actual_data(meta,key,dict):
     try:
         if key==meta.SOCIOS:
             _id = dict[meta.ID] 
+   
             if not _id[meta.IS_OK]: return None
         else:
             _id = dict[meta.VAR]
@@ -105,7 +107,7 @@ def check_data_base(meta,cur):
         CREATE TABLE IF NOT EXISTS movimientos_{key_str}_{identifier_str}(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         socio_id INTEGER UNIQUE,
-        {get_date_fields(meta,key_str,identifier_str)},
+        {get_date_fields(meta,key_str)},
         FOREIGN KEY(socio_id) REFERENCES socios(id)
         )""")
 
@@ -122,12 +124,14 @@ def setup_socios(meta,socio,key,cur):
         to_whom = 'empleado' if key==meta.EMPLEADOS else 'obrero'
     try:
         data = get_actual_data(meta=meta,dict=socio,key=key)
+    
         if data is not None:
             if key==meta.SOCIOS:
+                
                 cur.execute(""" INSERT INTO socios(NAME,CEDULA_CHAR,CEDULA,ACCOUNT_ONE,ACCOUNT_TWO)
                 VALUES(?,?,?,?,?)
                 """,(data[meta.NAME] , data[meta.ID][0],data[meta.ID][1],data[meta.ACC][0],data[meta.ACC][1]))
-            
+
             else:
                 
             

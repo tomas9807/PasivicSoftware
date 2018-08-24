@@ -6,13 +6,17 @@ from data_manager.into import from_excel
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
+def get_list_of_files(pardir):
+
+    return (
+    os.path.join(pardir,file)
+    for file in os.listdir(pardir))
+
+
 
 def remove_database():
-    import subprocess
-    subprocess.run('sudo rm -f ../../database/db.sqlite3',check=True)
-
-
-
+    if os.path.isfile('database/db.sqlite3'):
+        os.remove('database/db.sqlite3')
 
 if __name__=='__main__':
     remove_database()
@@ -47,27 +51,30 @@ if __name__=='__main__':
             file = os.path.join(BASE_DIR,'files/PASIVIC 2016/SOCIOS OBREROS.xlsx'),  #add socios to the database
         )
           
-          
-
 
         from_excel.insert_movs(
         meta= META_KEYS,
         cur=cur,
         key = META_KEYS.OBREROS,
         indentifier = META_KEYS.APORTE,
-        list_of_files = (
-            os.path.join(BASE_DIR,'files/PASIVIC 2016/OBREROS 2016 OK/APORTES OK/APORTES PASIVIC SEMANA 022016.xls'),
-            os.path.join(BASE_DIR,'files/PASIVIC 2016/OBREROS 2016 OK/APORTES OK/APORTES PASIVIC SEMANA 042016.xls'),
-         ))
-        
+        list_of_files = get_list_of_files('files/PASIVIC 2016/OBREROS 2016 OK/APORTES OK/')
+        )
+        from_excel.insert_movs(
+        meta= META_KEYS,
+        cur=cur,
+        key = META_KEYS.OBREROS,
+        indentifier = META_KEYS.DEDUC,
+        list_of_files = get_list_of_files('files/PASIVIC 2016/OBREROS 2016 OK/DEDUCCIONES OK/')
+        )
         from_excel.insert_movs(
         meta= META_KEYS,
         cur=cur,
         key = META_KEYS.EMPLEADOS,
         indentifier = META_KEYS.APORTE,
-        list_of_files = (
-            os.path.join(BASE_DIR,'files/PASIVIC 2016/OBREROS 2016 OK/APORTES OK/APORTES PASIVIC SEMANA 022016.xls'),
-            os.path.join(BASE_DIR,'files/PASIVIC 2016/OBREROS 2016 OK/APORTES OK/APORTES PASIVIC SEMANA 042016.xls'),
-         ))
-
+        list_of_files = get_list_of_files('files/PASIVIC 2016/EMPLEADOS 2016 OK/APORTES 2016')
+        )
+        
+        
+        
+        
    

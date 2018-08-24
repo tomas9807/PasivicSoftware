@@ -37,24 +37,29 @@ def is_name(var,meta):
     
 def is_id(var,meta):
     is_ok = True
-    
     try:
-        tmp = str(var)
+        tmp = str(var).strip()
+     
+
         if tmp=='':
             return {meta.VAR:None,meta.IS_OK: not is_ok}
 
         if tmp.isalnum(): 
             return {meta.VAR:var,meta.IS_OK: not is_ok}
         else:
-            split = re.split(r'[-]?',tmp)
-            
-            if not len(split)==2: return (var,not is_ok)
+
+            split = re.split(r'[-]+',tmp)
+
+
+            if not len(split)==2: return {meta.VAR:var,meta.IS_OK: not is_ok}
             else:
                 split_one = str(split[0]).upper().strip()
                 split_two = str(split[1]).strip()
                 if not split_one=='E' and not split_one=='V': 
+
                     return {meta.VAR:var,meta.IS_OK: not is_ok}
                 elif  not split_two.isdigit(): 
+
                     return {meta.VAR:var,meta.IS_OK: not is_ok}
                 else:
                     match = re.findall(r'[1-9]+[0-9]*',split_two)

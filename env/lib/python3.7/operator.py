@@ -1,1 +1,1 @@
-/usr/local/lib/python3.7/operator.py
+/usr/lib/python3.7/operator.py

@@ -1,1 +1,1 @@
-/usr/local/lib/python3.7/sre_parse.py
+/usr/lib/python3.7/sre_parse.py

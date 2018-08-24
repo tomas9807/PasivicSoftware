@@ -34,11 +34,27 @@ def is_id(var,meta):
         return {meta.VAR:var,meta.IS_OK: not is_ok}
 
 def get_date_from_filename(file_name,key,meta):
+    if key==meta.EMPLEADOS:
+        matches = re.search(r'0*([0-9]{1,2})-0*([0-9]{1,2})-[0-9]+',file_name).groups()
+        if matches and len(matches)==2:
+            day = matches[0]
+            month = matches[1]
+            offset = -1 if day==15 else 0
+            quin = (month * 2) + offset
+            return quin
+    elif key==meta.OBREROS:
+        matches = re.search(r'0*([0-9]+)20',file_name).groups()
+        if matches and len(matches)==1:
+            date = matches[0]
+            return date
+    return None
 
 
 
-    matches = re.search(r'0*([0-9]{1,2})-0*([0-9]{1,2})-[0-9]+',file_name).groups() if key==meta.EMPLEADOS else re.search(r'0*([0-9]{1,2})20?[0-9]{2}',file_name)
+
+    matches = re.search(r'0*([0-9]{1,2})-0*([0-9]{1,2})-[0-9]+',file_name).groups() if key==meta.EMPLEADOS else re.search(r'0*([0-9]+)20',file_name)
     matches = matches.groups()
+
     if matches and len(matches)==2 or len(matches)==1:
         return matches
     
