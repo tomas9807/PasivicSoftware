@@ -1,12 +1,5 @@
-import re
-
-tmp = {'value': 'V-4056366 ', 'bool': False}
-def get_split():
-    value = str(tmp['value']).strip()
-    if value=='':
-        return None
-    if value.isalnum(): 
-        return None
-    return re.split(r'[-]+',value)
-
-print(get_split())
+day = '30'
+month = '5'
+offset = -1 if day=='15' else 0
+quin = int(month * 2) + int(offset)
+print(day,month,quin)

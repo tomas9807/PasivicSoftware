@@ -12,9 +12,9 @@ def read_file(path):
     try:
         path = str(path)
         if path.endswith(('xlsx','xls')):
-            return pd.read_excel(path, header=None, na_filter=False)
+            return pd.read_excel(path, header=None, na_filter=False,encoding='utf-8')
         elif path.endswith(('csv',)):
-            return pd.read_csv(path, header=None, na_filter=False)
+            return pd.read_csv(path, header=None, na_filter=False,encoding="ISO-8859-1")
     except Exception as e :
         print(path,e)
         #print(traceback.format_exc())
@@ -49,27 +49,39 @@ def insert_movs(meta,cur, key, indentifier, list_of_files):
                 return None
             else:
                 cont = 1
+                is_csv = file.endswith(('csv',))
                 for row in df.itertuples():
 
-                    _id = nonsocios_utils.get_id(meta,row[ meta.get_default_patterns(meta.MOVIMIENTOS)[meta.ID] ])
+                    if is_csv:
+                        actual_row = str(row[1]).split(';')
+                        _id = nonsocios_utils.get_id(meta,actual_row[meta.get_default_patterns(meta.MOVIMIENTOS)[meta.ID] -1 ])
+                       
+                        
+                    else:
+                        _id = nonsocios_utils.get_id(meta,row[meta.get_default_patterns(meta.MOVIMIENTOS)[meta.ID] ])
 
                     if _id[meta.IS_OK]:
                         try:
-                            mov = nonsocios_utils.get_mov(row[ meta.get_default_patterns(meta.MOVIMIENTOS)[meta.MOVIMIENTOS] ]  )
-                            
+                            if is_csv:
+                                mov = nonsocios_utils.get_mov(actual_row[meta.get_default_patterns(meta.MOVIMIENTOS)[meta.MOVIMIENTOS] - 1])
+                            else:
+                                mov = nonsocios_utils.get_mov(row[ meta.get_default_patterns(meta.MOVIMIENTOS)[meta.MOVIMIENTOS] ]  )
                         except IndexError as e:
                             print(file,e,f'row {cont}')
-                        cont +=1
-                        if mov is not None:
+                            
+                        else:
+                            if mov is not None:
 
-                            data = cur.execute(""" 
-                            SELECT id FROM socios WHERE cedula=? LIMIT 1
-                            """, (_id[meta.VAR],))
-                            socio_id = data.fetchone()
+                                data = cur.execute(""" 
+                                SELECT id FROM socios WHERE cedula=? LIMIT 1
+                                """, (_id[meta.VAR],))
+                                socio_id = data.fetchone()
 
-                            if socio_id:
-                                to_database.insert_mov(meta,cur, key, indentifier,
-                                        date[0], socio_id, ''.join(mov))
+                                if socio_id:
+                                    
+                                    to_database.insert_mov(meta,cur, key, indentifier,
+                                            date, socio_id, ''.join(mov))
+                    cont +=1
 
 
 
