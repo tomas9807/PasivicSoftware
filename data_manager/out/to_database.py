@@ -1,7 +1,7 @@
 import sqlite3
 import os
 import traceback
-
+from .. import data_utils
 
 def get_strs(meta,key,identifier):
     identifier_str = 'aportes' if identifier==meta.APORTE else 'deducciones'
@@ -37,10 +37,6 @@ def insert_mov(meta,cur,key,identifier,date,socio_id,mov):
 
 
 
-def get_date_fields(meta,key_str):
-    num_fields = meta.SEMANAS if key_str=='obreros' else meta.QUINCENAS
-    date_type = 'semanas' if key_str=='obreros' else 'quincenas'
-    return ','.join(f'{date_type}_{num+1}' for num in range(num_fields))
 
 
 
@@ -49,8 +45,7 @@ def get_date_fields(meta,key_str):
 
 
 
-def are_all_null(*args):
-    return all(arg==None for arg in args)
+
 
 def get_actual_data(meta,key,dict):
     
@@ -73,43 +68,14 @@ def get_actual_data(meta,key,dict):
         name = name[meta.VAR]
         new_acc = (acc[0][meta.VAR],acc[1][meta.VAR])
         _id = _id[meta.VAR]
-        return {meta.NAME:name,meta.ID:_id,meta.ACC:new_acc}  if not are_all_null(name , _id  ,new_acc[0] ,new_acc[1]) else None
+        return {meta.NAME:name,meta.ID:_id,meta.ACC:new_acc}  if not data_utils.are_all_null(name , _id  ,new_acc[0] ,new_acc[1]) else None
     else:
         return _id
         
 
 
-def connect():
-    try:
-        # if os.path.isfile('db.sqlite3'): os.remove('db.sqlite3')
-        conn = sqlite3.connect('database/db.sqlite3')
-        return conn
-    except sqlite3.Error as e:
-        print(e)
 
-def check_data_base(meta,cur):
 
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS socios(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    cedula_char TEXT,
-    cedula text ,ACCOUNT_ONE TEXT ,
-    account_two TEXT,
-    empleado INT DEFAULT 0 ,
-    obrero INT DEFAULT 0
-    )""")
-    
-    for i in range(4):
-        identifier_str = 'aportes' if i%2==0 else 'deducciones'
-        key_str = 'obreros' if i<=1 else 'empleados'
-        cur.execute(f"""
-        CREATE TABLE IF NOT EXISTS movimientos_{key_str}_{identifier_str}(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        socio_id INTEGER UNIQUE,
-        {get_date_fields(meta,key_str)},
-        FOREIGN KEY(socio_id) REFERENCES socios(id)
-        )""")
 
 
 def setup_socios(meta,socio,key,cur):

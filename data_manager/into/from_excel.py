@@ -6,7 +6,9 @@ from ..out import to_database
 
 
 
-
+import sys
+print(__name__)
+print(sys.path)
 
 def read_file(path):
     try:
