@@ -4,7 +4,7 @@ from ..into import from_database
 from .. import data_utils 
 
 
-
+import traceback
 def round_decimal_two(str_num):
     return str(round(float(str_num),2)).replace(r'.','')
 
@@ -29,12 +29,33 @@ def get_dates_per_row(key_str,rows):
 
 
 
-def get_content(cur,key_str,identifier_str,date_str):
+def get_content(meta,cur,key_str,identifier_str,date_str):
     selected_socios = from_database.get_selected_socios(cur,key_str)
-    from pprint import pprint
+    
     for socio in selected_socios:
-        xd = from_database.get_nonsocios_from_date(cur,key_str,identifier_str,date_str,socio['id'])
-        pprint(xd)
+        _id = socio['id']
+        mov = from_database.get_mov_from_socio(cur,key_str,identifier_str,date_str,_id)[0][date_str]
+        if mov:
+            nacionalidad = socio['cedula_char']
+            cedula = socio['cedula']
+            account_one = socio['ACCOUNT_ONE']
+            account_two = socio['account_two']
+            full_acc = str(account_one if not account_two else account_one+account_two).replace('-','')
+
+            #here goes final variables
+            cedula = apply_zeros(cedula,meta.LEN_CEDULA)
+            mov = apply_zeros(round_decimal_two(mov),meta.LEN_MOV_INDIV)
+            tipo_mov = meta.tipo_mov["APORTE"]
+
+            one_line_content = apply_zeros(''.join((
+                meta.CONST,nacionalidad,cedula,tipo_mov,full_acc,meta.ZEROS_CONTENT,mov
+            )),meta.LEN_HEAD,left=False)
+            if not len(one_line_content)==60:
+                idx = selected_socios.index(socio) +1 
+                raise Exception(f'Line {idx} surpassed 60 length')
+            yield one_line_content
+
+        
 
 
 
@@ -49,25 +70,33 @@ def get_content(cur,key_str,identifier_str,date_str):
 
 
 def make_file(
-    meta,cur,identifier_str,key_str,pardir,HEAD_DATE,date_str
+    meta,cur,identifier_str,key_str,pardir,HEAD_DATE,date_str,n_socios
     ): 
-    get_content(cur,key_str,identifier_str,date_str)
+    try:
+        with open(f'{pardir}/{date_str}.txt','a') as f:
+
+            sum_of_movs = from_database.get_sum_from_fields(cur,key_str,identifier_str,data_utils.get_date_fields(meta,key_str,'+'))
+
+            sum_of_movs = apply_zeros(round_decimal_two(sum_of_movs[0]["mov_sum"]),meta.LEN_MONTO_TOTAL)
+           
+            HEAD_LINE = apply_zeros(
+                ''.join((meta.HEAD_CONST,meta.FONDO,HEAD_DATE, n_socios,sum_of_movs,meta.NUM_OFFICINA)),
+                meta.LEN_HEAD,
+                left=False,
+            )
+
+            if not len(HEAD_LINE)==60:
+                raise Exception('Head line surpassed 60 length')
+
+            f.write(HEAD_LINE + '\n')
+
+            for content_line in get_content(meta,cur,key_str,identifier_str,date_str):
+                f.write(content_line + '\n')
+
+    except Exception as e:
+        print(traceback.format_exc())
+        print(f'In file {date_str}.txt : {e}')
     
-    # with open('test.txt','a') as f:
-    #     table = f'movimientos_{key_str}_{identifier_str}'
-    #     sum_of_movs = from_database.get_sum_from_fields(cur,table,data_utils.get_date_fields(meta,key_str,'+'))
-    #     sum_of_movs = apply_zeros(round_decimal_two(sum_of_movs[0][0]),meta.LEN_MONTO_TOTAL)
-    #     print(from_database.get_total_num_socios(cur))
-    #     n_socios  = apply_zeros(from_database.get_total_num_socios(cur),meta.LEN_SOCIOS)
-    #     HEAD_LINE = apply_zeros(
-    #         ''.join((meta.HEAD_CONST,meta.FONDO,HEAD_DATE, n_socios,sum_of_movs,meta.NUM_OFFICINA)),
-    #         meta.LEN_HEAD,
-    #         left=False,
-    #     )
-    #     f.write(HEAD_LINE)
-
-
-
 
 
 

@@ -38,6 +38,12 @@ class Keys():
         self.FONDO = format_60["FONDO"]
         self.NUM_OFFICINA = format_60["NUM_OFFICINA"]
         self.LEN_HEAD = format_60["LEN_HEAD"]
+        self.LEN_CEDULA  = format_60["LEN_CEDULA"]
+        self.LEN_MOV_INDIV= format_60["LEN_MOV_INDIV"]
+        
+        self. ZEROS_CONTENT= format_60["ZEROS_CONTENT"]
+
+        self.tipo_mov = format_60["TIPO_MOV"]
 
         self.__default_patterns = {
 

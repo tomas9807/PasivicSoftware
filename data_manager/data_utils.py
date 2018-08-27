@@ -35,8 +35,8 @@ def connect():
 
 
 
-def get_date_fields(meta,key_str,separator=None):
-    if separator is None: separator = ','
+def get_date_fields(meta,key_str,separator=','):
+
     num_fields = meta.SEMANAS if key_str=='obreros' else meta.QUINCENAS
     date_type = 'semanas' if key_str=='obreros' else 'quincenas'
     return f'{separator}'.join(f'{date_type}_{num+1}' for num in range(num_fields))
