@@ -30,6 +30,13 @@ class Keys():
         self.DEDUC = keys_json['DEDU']
         self.QUINCENAS = keys_json['QUIN']
         self.SEMANAS = keys_json['SEM']
+        format_60 = keys_json["FORMAT_60"]
+        self.LEN_SOCIOS = format_60["LEN_SOCIOS"]
+        self.LEN_MONTO_TOTAL = format_60["LEN_MONTO_TOTAL"]
+        self.HEAD_CONST = format_60["HEAD_CONST"]
+        self.CONST = format_60["CONST"]
+        self.FONDO = format_60["FONDO"]
+        self.NUM_OFFICINA = format_60["NUM_OFFICINA"]
 
         self.__default_patterns = {
 

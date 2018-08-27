@@ -6,9 +6,7 @@ from ..out import to_database
 
 
 
-import sys
-print(__name__)
-print(sys.path)
+
 
 def read_file(path):
     try:
@@ -21,6 +19,12 @@ def read_file(path):
         print(path,e)
         #print(traceback.format_exc())
         
+
+            
+            
+
+
+
 
 
 def get_data_file(meta,df, patterns, key, func):

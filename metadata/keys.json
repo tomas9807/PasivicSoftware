@@ -11,5 +11,15 @@
 "APOR" : 15,
 "DEDU" : 16,
 "QUIN" : 24,
-"SEM" : 52
+"SEM" : 52,
+"FORMAT_60":{
+"LEN_SOCIOS":5,
+"LEN_MONTO_TOTAL":14,
+"HEAD_CONST" :"01",
+"CONST":"02",
+"FONDO":"040013",
+"NUM_OFFICINA":"150"
+}
+
+
 }
