@@ -1,11 +1,37 @@
 import sqlite3
+
+
+def return_as_dict(func):
+    def dict_factory(cursor, row):
+        d = {}
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+        return d
+    def add_factory():
+        conn = func()
+        conn.row_factory = dict_factory
+        return conn
+
+    
+    return add_factory
+
+
+
+@return_as_dict
 def connect():
     try:
         # if os.path.isfile('db.sqlite3'): os.remove('db.sqlite3')
-        conn = sqlite3.connect('database/db.sqlite3')
+        conn = sqlite3.connect('database/db.sqlite3' )
         return conn
     except sqlite3.Error as e:
         print(e)
+
+    
+
+
+
+
+
 
 
 

@@ -34,6 +34,7 @@ if __name__=='__main__':
             key_str =  'obreros',
             pardir = '',
             HEAD_DATE= date,
+            date_str='semanas_1'
             )
 
         # from_excel.setup_database(

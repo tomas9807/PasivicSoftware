@@ -37,6 +37,7 @@ class Keys():
         self.CONST = format_60["CONST"]
         self.FONDO = format_60["FONDO"]
         self.NUM_OFFICINA = format_60["NUM_OFFICINA"]
+        self.LEN_HEAD = format_60["LEN_HEAD"]
 
         self.__default_patterns = {
 
