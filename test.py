@@ -1,34 +1,16 @@
-import sqlite3
-def connect():
+import os
+
+def create_dir(child_dir_str):
+  
     try:
-        # if os.path.isfile('db.sqlite3'): os.remove('db.sqlite3')
-        conn = sqlite3.connect('database/db1.sqlite3')
-        return conn
-    except sqlite3.Error as e:
-        print(e)
+        pardir = os.path.abspath('static/')
+        original_umask  = os.umask(0o777)
+        os.makedirs(pardir,exist_ok=True)
+        child_dir = os.path.join(pardir,child_dir_str)
+        os.makedirs(child_dir,exist_ok=True)
+    finally:
+        os.umask(original_umask)
+        print('static folder created:', os.path.isdir(pardir))
+        print('img folder created: ', os.path.isdir(child_dir))
 
-
-    
-
-
-conn = connect()
-with conn:   
-    first_col_numbers =  [5,5]
-    second_col_numbers = [5,5]
-    print('no_sql:',sum(first_col_numbers)+sum(second_col_numbers))
-    cur = conn.cursor()
-    cur.execute(f"""
-    CREATE TABLE IF NOT EXISTS newone(
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        first_col TEXT,
-        second_col TEXT,
-        third_col TEXT)
-    """)
-    # for x,y in zip(first_col_numbers,second_col_numbers):
-    #     cur.execute(f""" 
-    #     INSERT INTO newone(first_col,second_col)
-    #     VALUES(?,?)
-    #     """,(x,y))
-    data = cur.execute(f'SELECT SUM(first_col+second_col) FROM newone')
-    my_sum = data.fetchall()
-    print(my_sum)
+create_dir('img')
