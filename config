@@ -1,0 +1,12 @@
+ 
+dpi 115
+scale display 1.2
+/usr/bin/chromium --force-device-scale-factor=1.18 %U
+{
+    "workbench.iconTheme": "city-lights-icons-vsc",
+    "workbench.colorTheme": "City Lights",
+   
+    "window.zoomLevel": 1,
+    
+    
+}
